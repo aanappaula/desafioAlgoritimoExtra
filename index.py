@@ -158,23 +158,72 @@ while True:
         for i in range(len(senha) - 1):
             if senha[i].isupper() and senha[i] == senha[i + 1]:
                 repetidos += 1
-        return repetidos
+        return repetidos * 2 
 
     def minusculasRepetido():
         repetidos = 0
         for i in range(len(senha) - 1):
             if senha[i].islower() and senha[i] == senha[i + 1]:
                 repetidos += 1
-        return repetidos
+        return repetidos * 2
 
     def numerosConsecutivos():
-        consecutivos = 0
+        total = 0
+        tamanho_seq = 1
         for i in range(len(senha) - 1):
-            if senha[i].isdigit() and int(senha[i]) + 1 == int(senha[i + 1]):
-                consecutivos += 1
-        return consecutivos
+            if senha[i].isdigit() and senha[i+1].isdigit() and int(senha[i+1]) == int(senha[i]) + 1:
+                tamanho_seq += 1
+            else:
+                if tamanho_seq >= 2:
+                    total += tamanho_seq * 2
+                tamanho_seq = 1
+        if tamanho_seq >= 2: 
+            total += tamanho_seq * 2
+        return total
 
-    def deducoes():
+    def letrasSequenciais():
+        total = 0
+        tamanho_seq = 1
+        for i in range(len(senha) - 1):
+            if senha[i].isalpha() and ord(senha[i+1]) == ord(senha[i]) + 1:
+                tamanho_seq += 1
+            else:
+                if tamanho_seq > 3:
+                    total += (tamanho_seq - 2) * 3
+                tamanho_seq = 1
+        if tamanho_seq > 3: 
+            total += (tamanho_seq - 2) * 3
+        return total
+    
+    def numerosSequenciais() -> int:
+        total = 0
+        tamanho_seq = 1
+        for i in range(len(senha) - 1):
+            if senha[i].isdigit() and senha[i+1].isdigit() and int(senha[i+1]) == int(senha[i]) + 1:
+                tamanho_seq += 1
+            else:
+                if tamanho_seq > 2:
+                    total += (tamanho_seq - 2) * 3
+                tamanho_seq = 1
+        if tamanho_seq > 2:
+            total += (tamanho_seq - 2) * 3
+        return total
+
+    def simbolosSequenciais():
+        total = 0
+        tamanho_seq = 1
+        for i in range(len(senha) - 1):
+            if not senha[i].isalnum() and ord(senha[i+1]) == ord(senha[i]) + 1:
+                tamanho_seq += 1
+            else:
+                if tamanho_seq > 3:
+                    total += (tamanho_seq - 2) * 3
+                tamanho_seq = 1
+        if tamanho_seq > 3: 
+            total += (tamanho_seq - 2) * 3
+        return total
+
+    def deducoes() -> int:
         total = (
             somenteLetras()
             + somenteNumero()
@@ -182,24 +231,32 @@ while True:
             + maiusculasRepetido()
             + minusculasRepetido()
             + numerosConsecutivos()
+            + letrasSequenciais()
+            + numerosSequenciais()
+            + simbolosSequenciais()
         )
         return total
 
     def pontuacao():
         total = adicoes() - deducoes()
         if total < 20:
-            print("Muito fraca")
+            print("Muito fraca, o seu total de pontos foi: ", total)
         elif total >= 20 and total < 40:
-            print("Fraca")
+            print("Fraca, o seu total de pontos foi: ", total)
         elif total >= 40 and total < 60:
-            print("Boa")
+            print("Boa, o seu total de pontos foi: ", total)
         elif total >= 60 and total < 80:
-            print("Forte")
+            print("Muito boa, o seu total de pontos foi: ", total)
         elif total >= 80:
-            print("Muito Forte")
+            print("Muito forte, o seu total de pontos foi: ", total)
 
     if verificaSpace():
         print("A senha não deve conter espaços em branco. Tente novamente!")
         continue
     else:
-        print(pontuacao())
+        pontuacao()
+        pergunta = input("Deseja classificar uma nova senha? Digite S para sim e N para não ")
+        if pergunta == 'S' or pergunta == "s":
+            continue
+        else:
+            break
